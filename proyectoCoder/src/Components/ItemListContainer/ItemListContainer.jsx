@@ -1,10 +1,42 @@
+import { useEffect,useState } from 'react';
+import { getProducts } from "../../assets/asyncMock";
+import { ItemList } from "../ItemList/ItemList";
+import{useParams} from"react-router-dom"
 import'../../../src/tailwind.css';
 
-export const ItemListContainer = ({greeting}) => {
+
+
+export const ItemListContainer = () => {
+  const { category } = useParams();
   
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+ 
+
+  useEffect(() => {
+    setIsLoading(true); 
+    getProducts()
+      .then((resp) => {
+       
+        if (category) {
+          
+          const productsFilter = resp.filter((product) => product.category === category);            
+         
+            if(productsFilter.length > 0) {              
+              setProducts(productsFilter);
+            } else {             
+              setProducts(resp);
+            }
+        } else {
+          setProducts(resp);
+        }
+        setIsLoading(false);
+      })
+      .catch((error) => console.log(error));
+  }, [category]); 
     return (
       <>
-         <h1 className='text-orange-300 text-7xl text-center m-10'>{greeting}</h1>
+         {isLoading ? <h2> CARGANDO......</h2> : <ItemList products={products}/>}
       </>
   )
 }
