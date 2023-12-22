@@ -1,32 +1,58 @@
-import { useEffect,useState } from "react";
-import { getProductById } from "../../assets/asyncMock";
-import { ItemDetail } from "../../Components/ItemDetail/ItemDetail";
-import { useParams } from "react-router-dom";
 
 
+
+
+
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ItemDetail } from '../ItemDetail/ItemDetail';
+import { db } from '../../config/firebaseConfig';
+import { getDoc, doc } from "firebase/firestore";
+import Swal from "sweetalert2";
+
+// Componente para mostrar los detalles de un producto individual
 export const ItemDetailContainer = () => {
-    const { id } = useParams();
-    const [item, setItem] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-  
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [item, setItem] = useState(null);
 
-    useEffect( () => { 
-      setIsLoading(true)
-        getProductById(id)
-        .then((resp )=> {
-          setItem(resp)
+  // Efecto para cargar la información
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const itemRef = doc(db, 'products', id);
+        const docSnap = await getDoc(itemRef);
         
-          setIsLoading(false)
-        })
-        
-        .catch(error => console.log(error));
-        
-      }, [])
-    
+        // Verifica si el documento existe 
+        if (docSnap.exists()) {
+          setItem({ id: docSnap.id, ...docSnap.data() });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error en el Producto",
+            text: "El producto que intenta buscar no existe",
+          }).then((result) => {
+            // Si el usuario hace clic en "OK", redirige a la página de inicio
+            if (result.isConfirmed) {
+              navigate("/");
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error');
+      }
+    };
+
+    // Llama a la función fetchData
+    fetchData();
+  }, [id, navigate]);
 
   return (
     <>
-    {isLoading ? <h2> CARGANDO......</h2> : item && <ItemDetail {...item} />}
+      <div >
+        {item && <ItemDetail {...item} />}
+      </div>
     </>
-  )
-}
+  );
+};
+

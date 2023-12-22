@@ -1,6 +1,7 @@
 
-import{CartWidget} from "../CartWidget/CartWidget";
+import { CartWidget } from "../CartWidget/CartWidget";
 import{Link} from "react-router-dom";
+import { Button } from "../Button/Button";
 import '../../tailwind.css';
 
 
@@ -15,19 +16,20 @@ export const NavBar = () => {
 
       <div className="inline-block align-middle">
       <Link to="/category/Almacenamiento">
-        <button className="rounded-full bg-orange-400  text-white m-5 p-2">Almacenamiento</button>
+      <Button text="Almacenamiento"/>
+      
       </Link>
 
       <Link to="/category/Perifericos">
-        <button className="rounded-full bg-orange-400 text-white m-5 p-2">Perifericos</button>
+        <Button text="Perifericos"/>
       </Link>
 
       <Link to="/category/Monitores">
-        <button className="rounded-full bg-orange-400 text-white m-5 p-2">Monitores</button>
+      <Button text="Monitores"/>
       </Link>
 
       <Link to="/category/CPU">
-        <button className="rounded-full bg-orange-400 text-white m-5 p-2">CPU</button>
+        <Button text="CPU"/>
       </Link>
       </div>
 
